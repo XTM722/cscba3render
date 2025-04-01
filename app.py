@@ -169,5 +169,5 @@ def add_header(response):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Creates the DB file if it doesn't exist
-    app.run(debug=True)
+    app.run()
 
