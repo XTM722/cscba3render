@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="https://www.utsc.utoronto.ca/favicon.ico">
+</head>
+<body style="background-color: #f5f9ff;">
+
+    <div class="container" style="max-width: 900px; margin: 50px auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);">
+        <h2 style="text-align: center; color: #002D72; margin-bottom: 25px;">Instructor Feedback</h2>
+        
+        {% if feedbacks %}
+            {% for feedback in feedbacks %}
+                <div class="feedback-card" style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+                    <p><strong>Q1:</strong> {{ feedback.q1 }}</p>
+                    <p><strong>Q2:</strong> {{ feedback.q2 }}</p>
+                    <p><strong>Q3:</strong> {{ feedback.q3 }}</p>
+                    <p><strong>Q4:</strong> {{ feedback.q4 }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if feedback.reviewed %}
+                            <span style="color: green;">Reviewed</span>
+                        {% else %}
+                            <span style="color: orange;">Pending</span>
+                        {% endif %}
+                    </p>
+                    <form action="{{ url_for('update_feedback_status', feedback_id=feedback.id) }}" method="POST" style="margin-top: 10px;">
+                        <select name="reviewed" required style="padding: 8px; border-radius: 5px; margin-right: 10px;">
+                            <option value="false" {% if not feedback.reviewed %}selected{% endif %}>Pending</option>
+                            <option value="true" {% if feedback.reviewed %}selected{% endif %}>Reviewed</option>
+                        </select>                        
+                        <button type="submit" style="padding: 8px 14px; background: #002D72; color: white; border: none; border-radius: 5px;">Update</button>
+                    </form>                    
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No feedback submissions yet.</p>
+        {% endif %}
+
+        <a href="{{ url_for('instructor_dashboard') }}" class="feedback-button" style="display: inline-block; background: #002D72; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; margin-top: 20px;">
+            ← Go Back to Dashboard
+        </a>
+    </div>
+
+</body>
+</html>

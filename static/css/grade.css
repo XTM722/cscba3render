@@ -1,0 +1,181 @@
+h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.main-content {
+    padding: 40px 60px;
+}
+
+
+/* 下拉样式 */
+.dropdown {
+    margin-bottom: 20px;
+}
+.dropdown summary {
+    padding: 10px 12px;
+    border: 1px solid black;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.dropdown ul {
+    border: 1px solid #ccc;
+    border-radius: 0 0 6px 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: #f7f7f7;
+}
+.dropdown li {
+    padding: 10px 12px;
+    cursor: pointer;
+}
+.dropdown li:hover {
+    background-color: #cce5ff;
+}
+
+/* 表格样式 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th, td {
+    text-align: left;
+    padding: 12px;
+}
+thead {
+    border-bottom: 2px solid #333;
+}
+
+
+/* 弹窗背景 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center; /* ⭐️ 水平居中 */
+    align-items: center;     /* ⬆️ 垂直居中 */
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+  
+/* 弹窗本体 */
+.modal-content {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+  
+/* 标题居中美化 */
+.modal-content h3 {
+    font-size: 20px;
+    color: #102c6d;
+    margin-bottom: 15px;
+}
+  
+/* 输入框宽度美化 */
+.modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+  
+/* 按钮居中且美化 */
+.modal-content button {
+    padding: 8px 16px;
+    background-color: #b7bdfc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+  
+.modal-content button:hover {
+    background-color: #8f9bf1;
+}
+
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    transition: 0.2s;
+}
+  
+.close-btn:hover {
+    color: #444;
+    transform: scale(1.2);
+}
+  
+/* 按钮样式 */
+.remark-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #b7bdfc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.remark-btn:hover {
+    background-color: #8f9bf1;
+}
+
+/* 已归档状态 */
+.remark-status {
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    color: #333;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.remark-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.remark-status.approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.remark-status.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* 禁用按钮样式 */
+.remark-btn-disabled {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #ddd;
+    border: none;
+    border-radius: 6px;
+    cursor: not-allowed;
+    color: #666;
+}

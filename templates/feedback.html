@@ -3,31 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSSB20 - FeedBack</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/syllabus.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/assignments.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/labs.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/lecture_notes.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/feedback.css')}}"> 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/theme.css')}}"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>CSCB20 - Anonymous Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     <link rel="icon" type="image/svg+xml" href="https://www.utsc.utoronto.ca/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-
     <!-- Sticky Header-->
     <header class="sticky">
-        <!-- mobile menu-->
         <input type="checkbox" id="menu-toggle">
         <label for="menu-toggle" class="menu-icon">☰</label>
-
         <div class="logo-container">
             <h1 class="course-title">CSCB20</h1>
         </div>
-
-        
-        <!-- Navigation Bar -->
         <nav>
             <ul class="nav-links">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
@@ -39,56 +29,72 @@
                 <li><a href="https://markus2.utsc.utoronto.ca/" target="_blank">MarkUs</a></li>
                 <li><a href="{{url_for('feedback')}}">FeedBack</a></li>
                 <li><a href="{{url_for('course_team')}}">Course Team</a></li>
+                <li><a href="{{url_for('grade')}}">Grades</a></li>
+                <li><a href="{{url_for('logout')}}">Logout</a></li>
             </ul>
          </nav>
-
-         
-
     </header>
 
+    <!-- Feedback Page Header -->
+    <div class="feedback-header">
+        <h2>Anonymous Feedback</h2>
+    </div>
 
-    <!-- Feedback Header -->
-    <section class="feedback-header">
-        <h2>Feedback</h2>
-    </section>
+    <!-- Main Feedback Form Section -->
+    <div class="feedback-container">
+        <div class="feedback-card">
+            <h3>Anonymous Feedback</h3>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-success">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
 
-    <section class="feedback-container">
-        <!-- Opinion Matters -->
-        <div class="feedback-card">
-            <h3>Your Opinion Matters</h3>
-            <p>Help us enhance your learning experience by sharing your thoughts:</p>
-            <ul>
-                <li><strong>What aspects of the course have been most helpful</strong> for your learning?</li>
-                <li><strong>What challenges did you face?</strong> Were there any difficult topics?</li>
-                <li><strong>How can we improve the course materials or teaching methods?</strong></li>
-                <li><strong>Are there any additional resources</strong> that would help you better understand the content?</li>
-                <li><strong>Do you have any general feedback</strong> or suggestions for the instructors?</li>
-            </ul>
-            <a href="#" class="feedback-button">Submit Course Evaluations</a>
-        </div>
-    
-        <!-- Feedback Form -->
-        <div class="feedback-card">
-            <h3>Feedback Form</h3>
-            <form action="#">
-                <textarea placeholder="Share your thoughts and suggestions..." required></textarea>
+            <form action="{{ url_for('feedback') }}" method="POST">
+                <div class="form-group">
+                    <label for="instructor">Select Instructor:</label>
+                    <select name="instructor_id" id="instructor" required>
+                        <option value="">-- Select Instructor --</option>
+                        {% for instructor in instructors %}
+                            <option value="{{ instructor.id }}">{{ instructor.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="q1">What do you like about the instructor’s teaching?</label>
+                    <textarea name="q1" id="q1" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="q2">What do you recommend the instructor to do to improve their teaching?</label>
+                    <textarea name="q2" id="q2" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="q3">What do you like about the labs?</label>
+                    <textarea name="q3" id="q3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="q4">What do you recommend the lab instructors to do to improve their lab teaching?</label>
+                    <textarea name="q4" id="q4" required></textarea>
+                </div>
+
                 <button type="submit">Submit Feedback</button>
             </form>
         </div>
-    </section>
-
-
+    </div>
 
     <!-- Footer -->
     <footer>
-        
         <ul class="menu"> 
             <li><a href="https://acorn.utoronto.ca/" target="_blank">ACORN</a></li>
             <li><a href="https://www.utoronto.ca/" target="_blank">U OF T MAIN</a></li>
             <li><a href="https://q.utoronto.ca/" target="_blank">QUERCUS</a></li>
-            <li><a href="{{url_for('feedback')}}">WEBSITE FEEDBACK</a></li>
+            <li><a href="{{ url_for('feedback') }}">WEBSITE FEEDBACK</a></li>
         </ul>
-         
+
         <ul class="social-links">
             <li><a href="https://www.facebook.com/UofTCompSci/" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li> 
             <li><a href="https://instagram.com/uoftcompsci" target="_blank"><i class="fa-brands fa-instagram"></i></a></li> 
@@ -104,9 +110,8 @@
             <div class="wave" id="wave3"></div>
             <div class="wave" id="wave4"></div>
         </div>
-        
-        
     </footer>
+
     <!--Dark Mode toggle-->
     <div class="theme-toggle">
         <input type="checkbox" id="dark-mode-toggle">
@@ -114,8 +119,6 @@
             <i class="fa-regular fa-moon"></i>
             <i class="fa-regular fa-sun"></i>
         </label>
-    </div>  
-
-    
+    </div>
 </body>
 </html>

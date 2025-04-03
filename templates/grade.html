@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSCB20 - Grades</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/grade.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/theme.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="https://www.utsc.utoronto.ca/favicon.ico">
+</head>
+<body>
+<header class="sticky">
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">☰</label>
+    <div class="logo-container"><h1 class="course-title">CSCB20</h1></div>
+    <nav>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{url_for('syllabus')}}">Syllabus</a></li>
+            <li><a href="{{url_for('assignments')}}">Assignments</a></li>
+            <li><a href="{{url_for('labs')}}">Labs</a></li>
+            <li><a href="{{url_for('lecture_notes')}}">Lecture Notes</a></li>
+            <li><a href="https://piazza.com/class/m5fmz9kzjo83yk" target="_blank">Piazza</a></li>
+            <li><a href="https://markus2.utsc.utoronto.ca/" target="_blank">MarkUs</a></li>
+            <li><a href="{{url_for('feedback')}}">Feedback</a></li>
+            <li><a href="{{url_for('course_team')}}">Course Team</a></li>
+            <li><a href="{{url_for('grade')}}">Grades</a></li>
+            <li><a href="{{url_for('logout')}}">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="main-content">
+    <h2 class="grade-title">Grades for {{ name }}</h2>
+
+    <details id="category-dropdown" class="dropdown">
+        <summary id="category-summary">Categories:</summary>
+        <ul>
+            <li onclick="showCategory('assignments')">Assignments</li>
+            <li onclick="showCategory('midterm')">Midterm Exam</li>
+            <li onclick="showCategory('labs')">Labs/Tutorials</li>
+            <li onclick="showCategory('final')">Final Exam</li>
+        </ul>
+    </details>
+
+    <p id="default-message">Select the category of grades you want to view.</p>
+
+    {% set categorized = {'assignments': [], 'midterm': [], 'labs': [], 'final': []} %}
+    {% for grade in grades %}
+        {% if 'Assignment' in grade.category %}
+            {% set _ = categorized['assignments'].append(grade) %}
+        {% elif 'Midterm' in grade.category %}
+            {% set _ = categorized['midterm'].append(grade) %}
+        {% elif 'Lab' in grade.category or 'Tutorial' in grade.category %}
+            {% set _ = categorized['labs'].append(grade) %}
+        {% elif 'Final' in grade.category %}
+            {% set _ = categorized['final'].append(grade) %}
+        {% endif %}
+    {% endfor %}
+
+    {% for cat in ['assignments', 'midterm', 'labs', 'final'] %}
+    <div id="{{ cat }}" class="grade-section" style="display: none;">
+        {% if categorized[cat] %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Grade</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in categorized[cat] %}
+                <tr>
+                    <td>{{ grade.category }}</td>
+                    <td>{{ grade.mark }}</td>
+                    <td>
+                        {% if grade.remark_status %}
+                            <span class="remark-btn-disabled">Remark</span>
+                        {% else %}
+                            <button class="remark-btn" onclick="openRemarkModal('{{ grade.id }}')">Remark</button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if grade.remark_status %}
+                            <span class="remark-status {{ grade.remark_status|lower }}">{{ grade.remark_status }}</span>
+                        {% else %}
+                            <span class="remark-status">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No grades available.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div id="remark-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeRemarkModal()">&times;</span>
+        <h3>Submit Remark</h3>
+        <textarea id="remark-text" placeholder="Enter your reason..." rows="4"></textarea>
+        <button onclick="submitRemark()">Submit</button>
+        <div id="remark-feedback"></div>
+    </div>
+</div>
+
+<script>
+function showCategory(id) {
+    const nameMap = {
+        assignments: "Assignments",
+        midterm: "Midterm Exam",
+        labs: "Labs/Tutorials",
+        final: "Final Exam"
+    };
+    document.getElementById('default-message').style.display = 'none';
+    document.querySelectorAll('.grade-section').forEach(div => div.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+    document.getElementById("category-summary").innerText = nameMap[id] + ":";
+    document.getElementById("category-dropdown").removeAttribute("open");
+}
+
+let currentGradeId = null;
+function openRemarkModal(gradeId) {
+    currentGradeId = gradeId;
+    document.getElementById("remark-text").value = '';
+    document.getElementById("remark-feedback").innerText = '';
+    document.getElementById("remark-modal").style.display = 'flex';
+}
+function closeRemarkModal() {
+    document.getElementById("remark-modal").style.display = "none";
+}
+function submitRemark() {
+    const reason = document.getElementById("remark-text").value;
+    fetch('/remark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assignment_id: currentGradeId, reason })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("remark-feedback").innerText = data.message;
+        setTimeout(() => closeRemarkModal(), 1000);
+        // Optionally reload the page to show updated status
+        setTimeout(() => location.reload(), 1200);
+    });
+}
+</script>
+</body>
+</html>
